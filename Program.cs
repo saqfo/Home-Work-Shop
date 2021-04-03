@@ -8,13 +8,12 @@ using HomeWork_Shop.Core.Tests;
 
 namespace HomeWork_Shop
 {
+	//TODO: rename master2 to master
+	delegate void CommandHanlder();
 	class Program
 	{
 		static Shop shop = new Shop();
 		static Cart cart = new Cart();
-
-		//TODO: create dictionary with commands and theirs description
-		//TODO: (not now) use fabric method(?) to use commands
 
 		enum Commands
 		{
@@ -30,39 +29,69 @@ namespace HomeWork_Shop
 			GET_PRODUCTS_IN_CART,
 			TEST
 		}
-		
+
+		static Dictionary<Commands, string> GetAllCommandsNames()
+		{
+
+			Dictionary<Commands, string> CommandNames = new Dictionary<Commands, string>();
+
+			CommandNames.Add(Commands.ADD_PRODUCT, ". Добавить продукт");
+			CommandNames.Add(Commands.REMOVE_PRODUCT, ". Удалить продукт");
+			CommandNames.Add(Commands.CHANGE_PRODUCT_NAME, ". Изменить имя продукта");
+			CommandNames.Add(Commands.CHANGE_PRODUCT_PRICE, ". Изменить цену продукта");
+			CommandNames.Add(Commands.GET_PRODUCT_COUNT, ". Показать остаток продуктов");
+			CommandNames.Add(Commands.BUY_PRODUCT, ". Купить продукт");
+			CommandNames.Add(Commands.GET_PRODUCT, ". Найти продукт");
+			CommandNames.Add(Commands.GET_ALL_PRODUCTS, ". Список всех продуктов");
+			CommandNames.Add(Commands.ADD_PRODUCT_TO_CART, ". Добавить продукт в корзину");
+			CommandNames.Add(Commands.GET_PRODUCTS_IN_CART, ". Список всех продуктов в корзине");
+			CommandNames.Add(Commands.TEST, ". Tests");
+
+			return CommandNames;
+		}
+
+		private static Dictionary<string, CommandHanlder> GetCommandHandlers()
+		{
+			var dict = new Dictionary<string, CommandHanlder>();
+
+			//TODO: add all methods here
+				
+			return dict;
+		}
 
 		static void Main(string[] args)
 		{
-			Dictionary<Commands, string> CommandNames = new Dictionary<Commands, string>();
-            
-				CommandNames.Add(Commands.ADD_PRODUCT, ". Добавить продукт");
-				CommandNames.Add(Commands.REMOVE_PRODUCT, ". Удалить продукт");
-				CommandNames.Add(Commands.CHANGE_PRODUCT_NAME, ". Изменить имя продукта");
-				CommandNames.Add(Commands.CHANGE_PRODUCT_PRICE, ". Изменить цену продукта");
-				CommandNames.Add(Commands.GET_PRODUCT_COUNT, ". Показать остаток продуктов");
-				CommandNames.Add(Commands.BUY_PRODUCT, ". Купить продукт");
-			    CommandNames.Add(Commands.GET_PRODUCT, ". Найти продукт");
-				CommandNames.Add(Commands.GET_ALL_PRODUCTS, ". Список всех продуктов");
-				CommandNames.Add(Commands.ADD_PRODUCT_TO_CART, ". Добавить продукт в корзину");
-				CommandNames.Add(Commands.GET_PRODUCTS_IN_CART, ". Список всех продуктов в корзине");
-				CommandNames.Add(Commands.TEST, ". Tests");
 
+			var allCommandNames = GetAllCommandsNames();
+			var allHandlers = GetCommandHandlers();
 
 			while (true)
 			{
 				Console.WriteLine("Выбирите действие : ");
-				Console.WriteLine((int)Commands.ADD_PRODUCT + CommandNames[Commands.ADD_PRODUCT]);
-				Console.WriteLine((int)Commands.REMOVE_PRODUCT + CommandNames[Commands.REMOVE_PRODUCT]);
-				Console.WriteLine((int)Commands.CHANGE_PRODUCT_NAME + CommandNames[Commands.CHANGE_PRODUCT_NAME]);
-				Console.WriteLine((int)Commands.CHANGE_PRODUCT_PRICE + CommandNames[Commands.CHANGE_PRODUCT_PRICE]);
-				Console.WriteLine((int)Commands.GET_PRODUCT_COUNT + CommandNames[Commands.GET_PRODUCT_COUNT]);
-				Console.WriteLine((int)Commands.BUY_PRODUCT + CommandNames[Commands.BUY_PRODUCT]);
-				Console.WriteLine((int)Commands.GET_PRODUCT + CommandNames[Commands.GET_PRODUCT]);
-				Console.WriteLine((int)Commands.GET_ALL_PRODUCTS + CommandNames[Commands.GET_ALL_PRODUCTS]);
-				Console.WriteLine((int)Commands.ADD_PRODUCT_TO_CART + CommandNames[Commands.ADD_PRODUCT_TO_CART]);
-				Console.WriteLine((int)Commands.GET_PRODUCTS_IN_CART + CommandNames[Commands.GET_PRODUCTS_IN_CART]);
-				Console.WriteLine((int)Commands.TEST + CommandNames[Commands.TEST]);
+
+				var values = Enum.GetValues(typeof(Commands)).Cast<Commands>();
+
+				foreach (var val in values)
+				{
+
+
+				}
+
+				/*					^
+									|
+									|
+								TODO: get rid of this use loop instead	*/
+				Console.WriteLine((int)Commands.ADD_PRODUCT + allCommandNames[Commands.ADD_PRODUCT]);
+				Console.WriteLine((int)Commands.REMOVE_PRODUCT + allCommandNames[Commands.REMOVE_PRODUCT]);
+				Console.WriteLine((int)Commands.CHANGE_PRODUCT_NAME + allCommandNames[Commands.CHANGE_PRODUCT_NAME]);
+				Console.WriteLine((int)Commands.CHANGE_PRODUCT_PRICE + allCommandNames[Commands.CHANGE_PRODUCT_PRICE]);
+				Console.WriteLine((int)Commands.GET_PRODUCT_COUNT + allCommandNames[Commands.GET_PRODUCT_COUNT]);
+				Console.WriteLine((int)Commands.BUY_PRODUCT + allCommandNames[Commands.BUY_PRODUCT]);
+				Console.WriteLine((int)Commands.GET_PRODUCT + allCommandNames[Commands.GET_PRODUCT]);
+				Console.WriteLine((int)Commands.GET_ALL_PRODUCTS + allCommandNames[Commands.GET_ALL_PRODUCTS]);
+				Console.WriteLine((int)Commands.ADD_PRODUCT_TO_CART + allCommandNames[Commands.ADD_PRODUCT_TO_CART]);
+				Console.WriteLine((int)Commands.GET_PRODUCTS_IN_CART + allCommandNames[Commands.GET_PRODUCTS_IN_CART]);
+				Console.WriteLine((int)Commands.TEST + allCommandNames[Commands.TEST]);
 
 
 
@@ -70,7 +99,7 @@ namespace HomeWork_Shop
 
 				Commands commands = (Commands)Enum.Parse(typeof(Commands), value);
 
-
+				//TODO: use command handlers instead of switch
 				switch (commands)
 				{
 
@@ -116,6 +145,9 @@ namespace HomeWork_Shop
 					case Commands.TEST:
 						PerformTest();
 						break;
+					default:
+						//TODO: add message that we don't know this command
+						break;
 				}
 
 
@@ -135,9 +167,6 @@ namespace HomeWork_Shop
 			testResult = shopTest.GetClientError(client, shop);
 			Console.WriteLine(testResult);
 		}
-
-		//TODO: divide each action to separated method
-		// ДЕЛАТЬ: разделить каждое действие на отдельный метод
 
 		static void Addproduct()
 		{
@@ -207,24 +236,24 @@ namespace HomeWork_Shop
 		}
 
 		static void AddProductToCart()
-        {			
+		{
 			Console.WriteLine("Введите ID товара : ");
 			string id = Console.ReadLine();
 			Console.WriteLine("Введите кол-во товара: ");
-			int count =Int32.Parse(Console.ReadLine());
+			int count = Int32.Parse(Console.ReadLine());
 			cart.Add(id, count);
 		}
 
 		static void GetProductsInCart()
-        {
+		{
 			string result = string.Empty;
 			foreach (var item in cart.CartOfProducts)
 			{
 				result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {item.Count} \t |ID: {item.Id} \n";
 			}
-            Console.WriteLine(result);
+			Console.WriteLine(result);
 		}
 
-		 
+
 	}
 }

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace HomeWork_Shop.Core
 {
-    //TODO: interface 
-    // ДЕЛАТЬ: интерфейс
     public interface ICart
     {
 
@@ -15,7 +13,9 @@ namespace HomeWork_Shop.Core
 
         double GetTotalPrice();
 
-        bool Add(string id, int count);
+        bool Add(Product product);
+
+        int CountOfProducts { get; }
 
     }
 }

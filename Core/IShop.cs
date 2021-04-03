@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace HomeWork_Shop.Core
 {
-    //TODO: implement interface and write test class that will check methods work
-    // ДЕЛАТЬ: реализовать интерфейс и написать тестовый класс, который будет проверять работу методов
     public interface IShop
     {
-        //returns id of newly created item
-        // возвращает id вновь созданного элемента
         string AddProduct(string name, string description, double price, int count);
         void RemoveProduct(string id);
         void ChangeProductName(string id, string name);

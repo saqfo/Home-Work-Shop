@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HomeWork_Shop.Core
 {
+
 	public class Shop : IShop
-	{   //TODO: add balance of money and change it after buying something
-		// ДЕЛАТЬ: добавить остаток денег и изменить его после покупки
+	{  
 		public double Money { get; set; }
 
-		public static List<Product> products = new List<Product>();
+		//TODO: get rid of static field products. Should be at at the instance of the Shop class
+		public List<Product> products = new List<Product>();
+		public Dictionary<string, int> counts = new Dictionary<string, int>();
 
 		public Shop()
 		{
-			Init();	
+			Init();
 		}
-		//TODO: make like this
 		void Init()
 		{
 			AddProduct("ipad ", "black", 150, 400);
@@ -28,7 +27,7 @@ namespace HomeWork_Shop.Core
 			AddProduct("notebook", "green", 300, 420);
 		}
 
-		
+
 
 		/*
 	      new Product{Name = "Book",Description = "Green",Price = 2,Count = 500,Id = "0001"},
@@ -43,35 +42,33 @@ namespace HomeWork_Shop.Core
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentException();
-			if(price<0)            
+			if (price < 0)
 				throw new ArgumentException();
 			if (count < 0)
 				throw new ArgumentException();
 			Product product = new Product();
-			product.Id = random.Next(1000,9999).ToString();
+			var id = random.Next(1000, 9999).ToString();
+			product.Id = id;
 			product.Name = name;
 			product.Price = price;
 			product.Description = description;
-			product.Count = count;
+			SetCount(id, count);
 			products.Add(product);
 			return product.Id;
-				
+
 		}
-	
-		//TODO: this method should find product if it doesn't exist throw error
-		// ДЕЛАТЬ: этот метод должен найти продукт, если его не существует, выбросить ошибку
+
 
 		public Product GetProduct(string id)
 		{
-		   Product product = products.FirstOrDefault(item => item.Id == id);
-			 if (product?.Id == id)	
+			Product product = products.FirstOrDefault(item => item.Id == id);
+			//TODO: always use brackets {} 
+			if (product?.Id == id)
+				//tODO: do not use console in other level except programm 
 				Console.WriteLine($"Название: {product.Name}\t |Описание: {product.Description}\t |Цена: {product.Price}\t |Количество: {product.Count}\t |ID:{product.Id} \n");
-			 else  throw new Exception("Такого ID не существует!");
+			else throw new Exception("Такого ID не существует!");
 
-			 return product;
-
-			//TODO: delete it when method will be implemented
-			//throw new NotImplementedException();
+			return product;
 		}
 
 
@@ -97,20 +94,23 @@ namespace HomeWork_Shop.Core
 
 		public int GetProductCount(string id)
 		{
-			Product product = products.FirstOrDefault(item => item.Id == id);
-			return product.Count;
+			return counts[id];
 		}
 
+		//TODO: add method GetProduct and use it instead of FirstOrDefaut
 		public double BuyProduct(string id, int count, double money)
 		{
 			Product product = products.FirstOrDefault(item => item.Id == id);
 			if (product == null)
 			{
+				//TODO: throw exceptions instead of console
 				Console.WriteLine("Такого товара не существует!");
 				return money;
 			}
-			
-			if (product.Count < count)
+
+			var productCount = GetProductCount(id);
+
+			if (productCount < count)
 				Console.WriteLine("Недостаточно товара!!!");
 			else
 			{
@@ -120,9 +120,17 @@ namespace HomeWork_Shop.Core
 				else
 					money = money - totalPrice;
 			}
-			product.Count = product.Count - count;
+
+			var newCount = productCount - count;
+			SetCount(id, newCount);
+
 			Console.WriteLine("Ваша сдача : ");
 			return money;
+		}
+
+		private void SetCount(string id, int newCount)
+		{
+			counts[id] = newCount;
 		}
 
 		public string GetAllProducts()
@@ -131,17 +139,17 @@ namespace HomeWork_Shop.Core
 			foreach (var item in products)
 			{
 				result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {item.Count} \t |ID: {item.Id} \n";
-			}			
+			}
 			return result;
 		}
 
 		public double GetProductPrice(string id)
 		{
-            foreach (var item in products)
-            {
+			foreach (var item in products)
+			{
 				if (item.Id == id)
 					return item.Price;
-            }
+			}
 			return -1;
 		}
 	}

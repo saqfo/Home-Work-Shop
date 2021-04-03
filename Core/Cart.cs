@@ -13,35 +13,15 @@ namespace HomeWork_Shop.Core
 
         public double GetTotalPrice()
         {
-            double TotalPrice = 0;
+            double totalPrice = 0;
             foreach (var item in CartOfProducts)
             {
-                TotalPrice += item.Price;
+                totalPrice += item.Price;
             }
-            return TotalPrice;
+            return totalPrice;
         }
-        public bool Add(string id , int count)
+        public bool Add(Product product)
         {
-            if (Shop.products.FirstOrDefault(p => p.Id == id) == null)
-            {
-                throw new ShopException(TypeOfException.PRODUCT_IS_NOT_EXIST);
-            }
-            var productInCart = Shop.products.FirstOrDefault(p => p.Id == id);
-            if (productInCart.Count < count)
-            {
-                throw new ShopException(TypeOfException.PRODUCT_IS_NOT_EXIST);
-            }
-            productInCart.Count =productInCart.Count-count;
-            Product product = new Product()
-            {
-                Id = id,
-                Name = productInCart.Name,
-                Description = productInCart.Description,
-                Count = count,
-                Price = productInCart.Price
-            };
-          
-
             CartOfProducts.Add(product);
             return true;
         }

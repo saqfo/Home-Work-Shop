@@ -17,7 +17,7 @@ namespace HomeWork_Shop.Core
         {
             get
             {
-				return Cart.CartOfProducts.Count;
+				return Cart.CountOfProducts;
             }
         }
 
@@ -39,7 +39,7 @@ namespace HomeWork_Shop.Core
 			if (product == null)
 				throw new ArgumentNullException();
 
-			Cart.Add(product.Id, product.Count);
+			Cart.Add(product);
 		}
 
 		public void BuyAllInCart()
