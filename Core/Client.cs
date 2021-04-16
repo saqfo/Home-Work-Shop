@@ -34,7 +34,7 @@ namespace HomeWork_Shop.Core
 			this.Money += summ;
 		}
 
-		public void AddToCart(Product product)
+		public void AddToCart(Product product, int count)
 		{
 			if (product == null)
 				throw new ArgumentNullException();
