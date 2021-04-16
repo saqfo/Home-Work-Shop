@@ -6,7 +6,8 @@ namespace HomeWork_Shop.Core
 {
 
 	public class Shop : IShop
-	{  
+	{
+
 		public double Money { get; set; }
 
 		//TODO: get rid of static field products. Should be at at the instance of the Shop class
@@ -27,6 +28,7 @@ namespace HomeWork_Shop.Core
 			AddProduct("notebook", "green", 300, 420);
 		}
 
+	
 
 
 		/*
@@ -61,14 +63,16 @@ namespace HomeWork_Shop.Core
 
 		public Product GetProduct(string id)
 		{
-			Product product = products.FirstOrDefault(item => item.Id == id);
-			//TODO: always use brackets {} 
-			if (product?.Id == id)
-				//tODO: do not use console in other level except programm 
-				Console.WriteLine($"Название: {product.Name}\t |Описание: {product.Description}\t |Цена: {product.Price}\t |Количество: {product.Count}\t |ID:{product.Id} \n");
-			else throw new Exception("Такого ID не существует!");
-
-			return product;
+			foreach (var item in products)
+			{
+				if (item.Id.Equals(id))
+				{
+					Console.WriteLine($"Название: {item.Name}\t |Описание: {item.Description}\t |Цена: {item.Price}\t |Количество: {counts[item.Id]}\t |ID:{item.Id} \n");
+					return item;
+				}
+			}
+			//throw new Exception("Такого ID не существует!");
+			return null;
 		}
 
 
@@ -97,7 +101,6 @@ namespace HomeWork_Shop.Core
 			return counts[id];
 		}
 
-		//TODO: add method GetProduct and use it instead of FirstOrDefaut
 		public double BuyProduct(string id, int count, double money)
 		{
 			Product product = products.FirstOrDefault(item => item.Id == id);
@@ -124,7 +127,7 @@ namespace HomeWork_Shop.Core
 			var newCount = productCount - count;
 			SetCount(id, newCount);
 
-			Console.WriteLine("Ваша сдача : ");
+            Console.WriteLine("Ваша сдача : ");
 			return money;
 		}
 
@@ -138,7 +141,7 @@ namespace HomeWork_Shop.Core
 			string result = "";
 			foreach (var item in products)
 			{
-				result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {item.Count} \t |ID: {item.Id} \n";
+				result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {counts[item.Id]} \t |ID: {item.Id} \n";
 			}
 			return result;
 		}

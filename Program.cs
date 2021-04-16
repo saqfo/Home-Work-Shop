@@ -8,12 +8,21 @@ using HomeWork_Shop.Core.Tests;
 
 namespace HomeWork_Shop
 {
-	//TODO: rename master2 to master
 	delegate void CommandHanlder();
+	delegate void AccountStateHandler(string message);
+
 	class Program
 	{
-		static Shop shop = new Shop();
-		static Cart cart = new Cart();
+
+		AccountStateHandler _del;
+		public void RegisterHandler(AccountStateHandler del)
+		{
+			_del = del;
+		}
+		static void Display(string message)
+		{
+			Console.WriteLine(message);
+		}
 
 		enum Commands
 		{
@@ -30,123 +39,253 @@ namespace HomeWork_Shop
 			TEST
 		}
 
-		static Dictionary<Commands, string> GetAllCommandsNames()
+		class Shop_Class
 		{
+			Shop shop;
+			Cart cart;
 
-			Dictionary<Commands, string> CommandNames = new Dictionary<Commands, string>();
+			public Shop_Class()
+			{
+				shop = new Shop();
+				cart = new Cart();
+			}
 
-			CommandNames.Add(Commands.ADD_PRODUCT, ". Добавить продукт");
-			CommandNames.Add(Commands.REMOVE_PRODUCT, ". Удалить продукт");
-			CommandNames.Add(Commands.CHANGE_PRODUCT_NAME, ". Изменить имя продукта");
-			CommandNames.Add(Commands.CHANGE_PRODUCT_PRICE, ". Изменить цену продукта");
-			CommandNames.Add(Commands.GET_PRODUCT_COUNT, ". Показать остаток продуктов");
-			CommandNames.Add(Commands.BUY_PRODUCT, ". Купить продукт");
-			CommandNames.Add(Commands.GET_PRODUCT, ". Найти продукт");
-			CommandNames.Add(Commands.GET_ALL_PRODUCTS, ". Список всех продуктов");
-			CommandNames.Add(Commands.ADD_PRODUCT_TO_CART, ". Добавить продукт в корзину");
-			CommandNames.Add(Commands.GET_PRODUCTS_IN_CART, ". Список всех продуктов в корзине");
-			CommandNames.Add(Commands.TEST, ". Tests");
+			public Dictionary<Commands, string> GetAllCommandsNames()
+			{
 
-			return CommandNames;
-		}
+				Dictionary<Commands, string> CommandNames = new Dictionary<Commands, string>();
 
-		private static Dictionary<string, CommandHanlder> GetCommandHandlers()
-		{
-			var dict = new Dictionary<string, CommandHanlder>();
+				CommandNames.Add(Commands.ADD_PRODUCT, ". Добавить продукт");
+				CommandNames.Add(Commands.REMOVE_PRODUCT, ". Удалить продукт");
+				CommandNames.Add(Commands.CHANGE_PRODUCT_NAME, ". Изменить имя продукта");
+				CommandNames.Add(Commands.CHANGE_PRODUCT_PRICE, ". Изменить цену продукта");
+				CommandNames.Add(Commands.GET_PRODUCT_COUNT, ". Показать остаток продуктов");
+				CommandNames.Add(Commands.BUY_PRODUCT, ". Купить продукт");
+				CommandNames.Add(Commands.GET_PRODUCT, ". Найти продукт");
+				CommandNames.Add(Commands.GET_ALL_PRODUCTS, ". Список всех продуктов");
+				CommandNames.Add(Commands.ADD_PRODUCT_TO_CART, ". Добавить продукт в корзину");
+				CommandNames.Add(Commands.GET_PRODUCTS_IN_CART, ". Список всех продуктов в корзине");
+				CommandNames.Add(Commands.TEST, ". Tests");
 
-			//TODO: add all methods here
-				
-			return dict;
+				return CommandNames;
+			}
+
+			public Dictionary<string, CommandHanlder> GetCommandHandlers()
+			{
+				var dict = new Dictionary<string, CommandHanlder>();
+
+				CommandHanlder command = Addproduct;
+				dict.Add("Add Product", command);
+				command = RemoveProduct;
+				dict.Add("Remove Product", command);
+				command = ChangeProductName;
+				dict.Add("Change Product Name", command);
+				command = ChangeProductPrice;
+				dict.Add("Change Product Price", command);
+				command = GetProductCount;
+				dict.Add("Get Product Count", command);
+				command = BuyProduct;
+				dict.Add("Buy Product", command);
+				command = GetProduct;
+				dict.Add("Get Product", command);
+				command = GetAllProducts;
+				dict.Add("Get All Products", command);
+				command = AddProductToCart;
+				dict.Add("Add Product ToCart", command);
+				command = GetProductsInCart;
+				dict.Add("Get Products In Cart", command);
+
+				return dict;
+			}
+
+			public void Addproduct()
+			{
+				Display("Name: ");
+				string name = Console.ReadLine();
+				Display("Description: ");
+				string desc = Console.ReadLine();
+				Display("Price: ");
+				double price = double.Parse(Console.ReadLine());
+				Display("Count: ");
+				int count = int.Parse(Console.ReadLine());
+
+				Display("id: " + shop.AddProduct(name, desc, price, count));
+			}
+
+			public void RemoveProduct()
+			{
+				Display("Введите ID товара,для удаления : ");
+				string IdRemove = Console.ReadLine();
+				try
+				{
+					shop.RemoveProduct(IdRemove);
+				}
+				catch (ArgumentException ex)
+				{
+					Console.WriteLine(ex.Message);
+				}
+			}
+			public void ChangeProductName()
+			{
+				Display("Введите ID товара,для изменения имени : ");
+				string IdChangeProductName = Console.ReadLine();
+				Display("Введите новое имя : ");
+				string ChangeName = Console.ReadLine();
+				shop.ChangeProductName(IdChangeProductName, ChangeName);
+			}
+			public void ChangeProductPrice()
+			{
+				Display("Введите ID товара,для изменения цены : ");
+				string IdChangeProductPrice = Console.ReadLine();
+				Display("Введите новую цену : ");
+				double ChangePrice = double.Parse(Console.ReadLine());
+				shop.ChangeProductPrice(IdChangeProductPrice, ChangePrice);
+			}
+			public void GetProductCount()
+			{
+				Display("Введите ID товара,что бы узнать количество");
+				string GetProductCount = Console.ReadLine();
+                Console.WriteLine(shop.GetProductCount(GetProductCount));
+			}
+			public void BuyProduct()
+			{
+				Display("Введите ID :");
+				string IdBuy = Console.ReadLine();
+				Display("Введите количество :");
+				int countBuy = int.Parse(Console.ReadLine());
+				Display("Введите сумму :");
+				double moneyBuy = double.Parse(Console.ReadLine());
+
+                Console.WriteLine(shop.BuyProduct(IdBuy, countBuy, moneyBuy));
+			}
+
+			public void GetProduct()
+			{
+				Display("Введите ID : ");
+				string IdWerify = Console.ReadLine();
+
+				shop.GetProduct(IdWerify);
+			}
+
+			public void GetAllProducts()
+			{
+				Console.WriteLine(shop.GetAllProducts());
+			}
+
+			public void AddProductToCart()
+			{
+
+				Console.WriteLine(shop.GetAllProducts());
+				Display("Введите ID товара : ");
+				string id = Console.ReadLine();
+				Display("Введите кол-во товара: ");
+				int count = Int32.Parse(Console.ReadLine());
+
+				if (shop.counts[id] >= count)
+				{
+					cart.Add(shop.GetProduct(id));
+					cart.SetCount(id, count);
+					shop.counts[id] -= count;
+				}
+				else
+				{
+					Display("Ошибка. Недостаточно товара на складе!");
+				}
+			}
+
+			public void GetProductsInCart()
+			{
+				string result = string.Empty;
+				foreach (var item in cart.CartOfProducts)
+				{
+					result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {cart.counts[item.Id]} \t |ID: {item.Id} \n";
+				}
+				Display(result);
+			}
 		}
 
 		static void Main(string[] args)
 		{
+			Shop_Class shop = new Shop_Class();
 
-			var allCommandNames = GetAllCommandsNames();
-			var allHandlers = GetCommandHandlers();
+			var allCommandNames = shop.GetAllCommandsNames();
+			var allHandlers = shop.GetCommandHandlers();
 
 			while (true)
 			{
-				Console.WriteLine("Выбирите действие : ");
+				Display("Выбирите действие : ");
 
 				var values = Enum.GetValues(typeof(Commands)).Cast<Commands>();
 
 				foreach (var val in values)
 				{
-
-
+					Display((int)val + allCommandNames[val]);
 				}
-
-				/*					^
-									|
-									|
-								TODO: get rid of this use loop instead	*/
-				Console.WriteLine((int)Commands.ADD_PRODUCT + allCommandNames[Commands.ADD_PRODUCT]);
-				Console.WriteLine((int)Commands.REMOVE_PRODUCT + allCommandNames[Commands.REMOVE_PRODUCT]);
-				Console.WriteLine((int)Commands.CHANGE_PRODUCT_NAME + allCommandNames[Commands.CHANGE_PRODUCT_NAME]);
-				Console.WriteLine((int)Commands.CHANGE_PRODUCT_PRICE + allCommandNames[Commands.CHANGE_PRODUCT_PRICE]);
-				Console.WriteLine((int)Commands.GET_PRODUCT_COUNT + allCommandNames[Commands.GET_PRODUCT_COUNT]);
-				Console.WriteLine((int)Commands.BUY_PRODUCT + allCommandNames[Commands.BUY_PRODUCT]);
-				Console.WriteLine((int)Commands.GET_PRODUCT + allCommandNames[Commands.GET_PRODUCT]);
-				Console.WriteLine((int)Commands.GET_ALL_PRODUCTS + allCommandNames[Commands.GET_ALL_PRODUCTS]);
-				Console.WriteLine((int)Commands.ADD_PRODUCT_TO_CART + allCommandNames[Commands.ADD_PRODUCT_TO_CART]);
-				Console.WriteLine((int)Commands.GET_PRODUCTS_IN_CART + allCommandNames[Commands.GET_PRODUCTS_IN_CART]);
-				Console.WriteLine((int)Commands.TEST + allCommandNames[Commands.TEST]);
-
-
 
 				string value = Console.ReadLine();
 
 				Commands commands = (Commands)Enum.Parse(typeof(Commands), value);
-
+				CommandHanlder command;
 				//TODO: use command handlers instead of switch
 				switch (commands)
 				{
 
+
 					case Commands.ADD_PRODUCT:
-						Addproduct();
+						command = allHandlers["Add Product"];
+						command();
+						//Addproduct();
 						break;
 
 					case Commands.REMOVE_PRODUCT:
-						RemoveProduct();
+						command = allHandlers["Remove Product"];
+						command();
 						break;
 
 					case Commands.CHANGE_PRODUCT_NAME:
-						ChangeProductName();
+						command = allHandlers["Change Product Name"];
+						command();
 						break;
 
 					case Commands.CHANGE_PRODUCT_PRICE:
-						ChangeProductPrice();
+						command = allHandlers["Change Product Price"];
+						command();
 						break;
 
 					case Commands.GET_PRODUCT_COUNT:
-						GetProductCount();
+						command = allHandlers["Get Product Count"];
+						command();
 						break;
 
 					case Commands.BUY_PRODUCT:
-						BuyProduct();
+						command = allHandlers["Buy Product"];
+						command();
 						break;
 
 					case Commands.GET_PRODUCT:
-						GetProduct();
+						command = allHandlers["Get Product"];
+						command();
 						break;
 
 					case Commands.GET_ALL_PRODUCTS:
-						GetAllProducts();
+						command = allHandlers["Get All Products"];
+						command();
 						break;
 
 					case Commands.ADD_PRODUCT_TO_CART:
-						AddProductToCart();
+						command = allHandlers["Add Product ToCart"];
+						command();
 						break;
 					case Commands.GET_PRODUCTS_IN_CART:
-						GetProductsInCart();
+						command = allHandlers["Get Products In Cart"];
+						command();
 						break;
 
-					case Commands.TEST:
-						PerformTest();
-						break;
+					//case Commands.TEST:
+					//	PerformTest();
+					//	break;
 					default:
-						//TODO: add message that we don't know this command
+						Display("Неизвестная команда!");
 						break;
 				}
 
@@ -155,104 +294,17 @@ namespace HomeWork_Shop
 
 		}
 
+		//static void PerformTest()
+		//{
+		//	var shopTest = new MainTest();
+		//	var shop = new Shop();
+		//	var client = new Client();
+		//	var testResult = shopTest.GetShopError(shop);
+		//	Console.WriteLine(testResult);
+		//	testResult = shopTest.GetClientError(client, shop);
+		//	Console.WriteLine(testResult);
+		//}
 
-
-		static void PerformTest()
-		{
-			var shopTest = new MainTest();
-			var shop = new Shop();
-			var client = new Client();
-			var testResult = shopTest.GetShopError(shop);
-			Console.WriteLine(testResult);
-			testResult = shopTest.GetClientError(client, shop);
-			Console.WriteLine(testResult);
-		}
-
-		static void Addproduct()
-		{
-			Console.Write("Name: ");
-			string name = Console.ReadLine();
-			Console.Write("Description: ");
-			string desc = Console.ReadLine();
-			Console.Write("Price: ");
-			double price = double.Parse(Console.ReadLine());
-			Console.Write("Count: ");
-			int count = int.Parse(Console.ReadLine());
-
-			Console.WriteLine("id: " + shop.AddProduct(name, desc, price, count));
-		}
-
-		static void RemoveProduct()
-		{
-			Console.WriteLine("Введите ID товара,для удаления : ");
-			string IdRemove = Console.ReadLine();
-			shop.RemoveProduct(IdRemove);
-		}
-		static void ChangeProductName()
-		{
-			Console.WriteLine("Введите ID товара,для изменения имени : ");
-			string IdChangeProductName = Console.ReadLine();
-			Console.WriteLine("Введите новое имя : ");
-			string ChangeName = Console.ReadLine();
-			shop.ChangeProductName(IdChangeProductName, ChangeName);
-		}
-		static void ChangeProductPrice()
-		{
-			Console.WriteLine("Введите ID товара,для изменения цены : ");
-			string IdChangeProductPrice = Console.ReadLine();
-			Console.WriteLine("Введите новую цену : ");
-			double ChangePrice = double.Parse(Console.ReadLine());
-			shop.ChangeProductPrice(IdChangeProductPrice, ChangePrice);
-		}
-		static void GetProductCount()
-		{
-			Console.WriteLine("Введите ID товара,что бы узнать количество");
-			string GetProductCount = Console.ReadLine();
-			Console.WriteLine(shop.GetProductCount(GetProductCount));
-		}
-		static void BuyProduct()
-		{
-			Console.WriteLine("Введите ID :");
-			string IdBuy = Console.ReadLine();
-			Console.WriteLine("Введите количество :");
-			int countBuy = int.Parse(Console.ReadLine());
-			Console.WriteLine("Введите сумму :");
-			double moneyBuy = double.Parse(Console.ReadLine());
-
-			Console.WriteLine(shop.BuyProduct(IdBuy, countBuy, moneyBuy));
-		}
-
-		static void GetProduct()
-		{
-			Console.Write("Введите ID : ");
-			string IdWerify = Console.ReadLine();
-
-			shop.GetProduct(IdWerify);
-		}
-
-		static void GetAllProducts()
-		{
-			Console.WriteLine(shop.GetAllProducts());
-		}
-
-		static void AddProductToCart()
-		{
-			Console.WriteLine("Введите ID товара : ");
-			string id = Console.ReadLine();
-			Console.WriteLine("Введите кол-во товара: ");
-			int count = Int32.Parse(Console.ReadLine());
-			cart.Add(id, count);
-		}
-
-		static void GetProductsInCart()
-		{
-			string result = string.Empty;
-			foreach (var item in cart.CartOfProducts)
-			{
-				result += $"Название: {item.Name} \t |Описание: {item.Description} \t |Цена: {item.Price} \t |Количество: {item.Count} \t |ID: {item.Id} \n";
-			}
-			Console.WriteLine(result);
-		}
 
 
 	}
